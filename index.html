@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSIR-NET Physical Science | SHODH 2.0</title>
+    
+    <!-- MathJax for Physics Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app-loader" class="loader-overlay">
+        <div style="text-align:center;">
+            <div class="spinner"></div>
+            <p style="margin-top:10px;">Initializing Quantum Physics Module...</p>
+        </div>
+    </div>
+
+    <nav>
+        <div class="brand">⚛️ CSIR-NET Physics Hub</div>
+        <div class="nav-right">
+            <button class="btn btn-outline" onclick="window.goToHome()">Dashboard</button>
+            <div id="nav-auth-buttons" class="nav-group">
+                <button class="btn btn-outline" onclick="window.showUserAuth()">Login</button>
+                <button class="btn btn-outline" onclick="window.toggleAdminAuth()">Admin</button>
+            </div>
+            <div id="nav-user-profile" class="nav-profile hidden">
+                <span id="nav-username">User</span>
+                <button class="btn btn-danger btn-small" onclick="window.logoutUser()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HOME / DASHBOARD -->
+    <div id="section-home" class="container">
+        <div class="card hero">
+            <h2>CSIR-NET Physical Science (SHODH 2.0)</h2>
+            <p>Advanced DPPs for Quantum Mechanics, Classical Mechanics & Mathematical Physics.</p>
+            
+            <!-- RESUME ALERT BOX -->
+            <div id="resume-alert" class="resume-box hidden">
+                <div style="flex:1">
+                    <strong>⚠️ Unfinished Attempt Found</strong><br>
+                    <small>You have a paused session for <span id="resume-quiz-title"></span></small>
+                </div>
+                <button class="btn btn-warning" onclick="window.resumeLastSession()">Resume Test ⏯️</button>
+                <button class="btn btn-outline" style="border-color:#333; color:#333; margin-left:5px;" onclick="window.discardSession()">Discard</button>
+            </div>
+
+            <button class="btn btn-success" id="hero-action-btn" onclick="window.showUserAuth()">Login / Register</button>
+        </div>
+        
+        <h3>Available DPPs</h3>
+        <div id="quiz-list-container" class="grid">
+            <p class="muted">Loading Physics modules...</p>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION -->
+    <div id="section-user-auth" class="container hidden">
+        <div class="card auth-box">
+            <div class="tab-row">
+                <button class="tab-btn active" id="tab-login" onclick="window.switchAuthTab('login')">Login</button>
+                <button class="tab-btn" id="tab-register" onclick="window.switchAuthTab('register')">Register</button>
+            </div>
+            <div id="auth-form-login">
+                <h3>Aspirant Login</h3>
+                <input type="email" id="loginEmail" class="input-field" placeholder="Email" autocomplete="username">
+                <input type="password" id="loginPass" class="input-field" placeholder="Password" autocomplete="current-password">
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="window.loginUser()">Login</button>
+            </div>
+            <div id="auth-form-register" class="hidden">
+                <h3>New Registration</h3>
+                <input type="email" id="regEmail" class="input-field" placeholder="Email Address" autocomplete="username">
+                <input type="text" id="regUser" class="input-field" placeholder="Full Name">
+                <input type="password" id="regPass" class="input-field" placeholder="Password" autocomplete="new-password">
+                <button class="btn btn-success" style="width:100%; margin-top:10px;" onclick="window.registerUser()">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="section-admin-dashboard" class="container hidden">
+        <div class="admin-top">
+            <h2>👨‍🏫 Faculty Dashboard</h2>
+            <div class="row">
+                <button class="btn btn-success" onclick="window.showQuizCreator()">+ Upload DPP JSON</button>
+                <button class="btn btn-danger" onclick="window.logoutAdmin()">Logout</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Active Physics Modules</h3>
+            <div id="admin-quiz-list"></div>
+        </div>
+    </div>
+
+    <!-- QUIZ CREATOR (UPLOAD ONLY) -->
+    <div id="section-quiz-creator" class="container hidden">
+        <div class="card">
+            <h3>Upload DPP (JSON Format)</h3>
+            <p class="muted">Upload the JSON file containing Questions, Options, and <strong>Solutions</strong>.</p>
+            <div class="panel panel-ok">
+                <input type="file" id="jsonQuizInput" accept=".json" onchange="window.uploadQuizJSON(this)">
+            </div>
+            <button class="btn btn-danger" onclick="window.goToAdminDashboard()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div id="section-instructions" class="container hidden">
+        <div class="card centered">
+            <h2 id="ins-title">Quiz Title</h2>
+            <div class="notice">
+                <strong>CSIR-NET Instructions:</strong>
+                <p>1. Correct Answer: +Marks assigned.</p>
+                <p>2. Use the "Save & Next" button to proceed.</p>
+                <p>3. You can <strong>Pause</strong> the test and resume later.</p>
+            </div>
+            <button class="btn btn-success" style="width:100%;" onclick="window.startTest()">Start Test</button>
+        </div>
+    </div>
+
+    <!-- ACTIVE QUIZ INTERFACE -->
+    <div id="section-active-quiz" class="container hidden">
+        <div class="card">
+            <div class="question-header">
+                <div>
+                    <span class="strong">Question <span id="active-q-num">1</span></span>
+                    <span class="q-tag">Part B/C</span>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button class="btn btn-warning btn-small" onclick="window.pauseTest()">⏸️ Pause & Save</button>
+                    <div class="timer-badge" id="timer-display">00:00</div>
+                </div>
+            </div>
+            
+            <!-- Question Content with MathJax Support -->
+            <h3 id="active-question-text" class="question-text" style="font-size:1.1em; line-height:1.6;">Loading...</h3>
+            
+            <div id="active-options-area"></div>
+            
+            <div class="nav-row">
+                <button class="btn btn-primary" id="btn-prev" onclick="window.changeQuestion(-1)">Previous</button>
+                <button class="btn btn-success" id="btn-next" onclick="window.changeQuestion(1)">Save & Next</button>
+                <button class="btn btn-danger" id="btn-submit" onclick="window.submitTest()" style="display:none;">Submit Final</button>
+            </div>
+        </div>
+        
+        <!-- Question Grid -->
+        <div class="card">
+            <h4>Question Palette</h4>
+            <div id="question-grid-target" class="grid-container"></div>
+        </div>
+    </div>
+
+    <!-- RESULT & SOLUTIONS -->
+    <div id="section-result" class="container hidden">
+        <div class="card center">
+            <h2>Test Analysis</h2>
+            <div class="score-big"><span id="res-score">0</span> / <span id="res-total">0</span></div>
+            <p class="muted">Check the detailed solutions below.</p>
+        </div>
+        <div class="card">
+            <h3>Detailed Solutions & Hints</h3>
+            <div id="detailed-report"></div>
+        </div>
+        <button class="btn btn-primary" onclick="window.goToHome()">Back to Dashboard</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
