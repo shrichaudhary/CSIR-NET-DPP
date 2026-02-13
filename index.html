@@ -16,16 +16,16 @@
     <div id="app-loader" class="loader-overlay">
         <div style="text-align:center;">
             <div class="spinner"></div>
-            <p style="margin-top:10px;">Initializing Quantum Physics Module...</p>
+            <p style="margin-top:10px;">Connecting to Physics Server...</p>
         </div>
     </div>
 
     <nav>
         <div class="brand">⚛️ CSIR-NET Physics Hub</div>
         <div class="nav-right">
-            <button class="btn btn-outline" onclick="window.goToHome()">Dashboard</button>
+            <button class="btn btn-outline" onclick="window.goToHome()">Home</button>
             <div id="nav-auth-buttons" class="nav-group">
-                <button class="btn btn-outline" onclick="window.showUserAuth()">Login</button>
+                <button class="btn btn-outline" onclick="window.showUserAuth()">Student Login</button>
                 <button class="btn btn-outline" onclick="window.toggleAdminAuth()">Admin</button>
             </div>
             <div id="nav-user-profile" class="nav-profile hidden">
@@ -35,17 +35,17 @@
         </div>
     </nav>
 
-    <!-- HOME / DASHBOARD -->
+    <!-- SECTION: HOME -->
     <div id="section-home" class="container">
         <div class="card hero">
             <h2>CSIR-NET Physical Science (SHODH 2.0)</h2>
             <p>Advanced DPPs for Quantum Mechanics, Classical Mechanics & Mathematical Physics.</p>
             
-            <!-- RESUME ALERT BOX -->
+            <!-- RESUME ALERT BOX (Fixed) -->
             <div id="resume-alert" class="resume-box hidden">
                 <div style="flex:1">
                     <strong>⚠️ Unfinished Attempt Found</strong><br>
-                    <small>You have a paused session for <span id="resume-quiz-title"></span></small>
+                    <small>You have a paused session for <span id="resume-quiz-title">Test</span></small>
                 </div>
                 <button class="btn btn-warning" onclick="window.resumeLastSession()">Resume Test ⏯️</button>
                 <button class="btn btn-outline" style="border-color:#333; color:#333; margin-left:5px;" onclick="window.discardSession()">Discard</button>
@@ -54,13 +54,13 @@
             <button class="btn btn-success" id="hero-action-btn" onclick="window.showUserAuth()">Login / Register</button>
         </div>
         
-        <h3>Available DPPs</h3>
+        <h3>Available DPPs (Live)</h3>
         <div id="quiz-list-container" class="grid">
             <p class="muted">Loading Physics modules...</p>
         </div>
     </div>
 
-    <!-- AUTHENTICATION -->
+    <!-- SECTION: AUTH -->
     <div id="section-user-auth" class="container hidden">
         <div class="card auth-box">
             <div class="tab-row">
@@ -83,14 +83,57 @@
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD -->
+    <!-- SECTION: USER DASHBOARD -->
+    <div id="section-user-dashboard" class="container hidden">
+        <div class="card">
+            <h2 class="primary">👤 My Dashboard</h2>
+            <p>Welcome back, <strong id="dash-username">User</strong></p>
+        </div>
+        <div class="grid two">
+            <div class="card warning">
+                <h3>⏳ Pending Reviews</h3>
+                <p class="muted">Subjective answers waiting for checking.</p>
+                <div id="dash-pending-list">Loading...</div>
+            </div>
+            <div class="card success">
+                <h3>✅ Completed Tests</h3>
+                <p class="muted">Your live results.</p>
+                <div id="dash-history-list">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: ADMIN LOGIN -->
+    <div id="section-admin-login" class="container hidden">
+        <div class="card auth-box">
+            <h2>🔐 Faculty Panel</h2>
+            <input type="email" id="adminEmail" class="input-field" placeholder="Admin Email">
+            <input type="password" id="adminPass" class="input-field" placeholder="Password">
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="window.verifyAdmin()">Login</button>
+        </div>
+    </div>
+
+    <!-- SECTION: ADMIN DASHBOARD -->
     <div id="section-admin-dashboard" class="container hidden">
         <div class="admin-top">
             <h2>👨‍🏫 Faculty Dashboard</h2>
             <div class="row">
-                <button class="btn btn-success" onclick="window.showQuizCreator()">+ Upload DPP JSON</button>
+                <button class="btn btn-success" onclick="window.showQuizCreator()">+ Create/Upload DPP</button>
                 <button class="btn btn-danger" onclick="window.logoutAdmin()">Logout</button>
             </div>
+        </div>
+        
+        <div class="card">
+            <h3>🛠️ Management Controls</h3>
+            <div class="row">
+                <button class="btn btn-primary" onclick="window.showStudentManager()">Manage Students</button>
+                <button class="btn btn-outline" style="color:#333; border-color:#333;" onclick="window.showAdminManager()">Manage Admins</button>
+            </div>
+        </div>
+
+        <div class="card warn-border">
+            <h3>⚠️ Global Pending Evaluations (<span id="admin-pending-count">0</span>)</h3>
+            <div id="pending-eval-list"></div>
         </div>
         <div class="card">
             <h3>Active Physics Modules</h3>
@@ -98,77 +141,122 @@
         </div>
     </div>
 
-    <!-- QUIZ CREATOR (UPLOAD ONLY) -->
-    <div id="section-quiz-creator" class="container hidden">
+    <!-- SECTION: STUDENT MANAGER -->
+    <div id="section-admin-students" class="container hidden fade-in">
         <div class="card">
-            <h3>Upload DPP (JSON Format)</h3>
-            <p class="muted">Upload the JSON file containing Questions, Options, and <strong>Solutions</strong>.</p>
-            <div class="panel panel-ok">
-                <input type="file" id="jsonQuizInput" accept=".json" onchange="window.uploadQuizJSON(this)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2>🎓 Student Management</h2>
+                <button class="btn btn-outline" style="color:#333; border-color:#333;" onclick="window.goToAdminDashboard()">Back</button>
             </div>
-            <button class="btn btn-danger" onclick="window.goToAdminDashboard()">Cancel</button>
+            <input type="text" id="student-search" class="input-field" placeholder="Search..." onkeyup="window.filterStudents()">
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead>
+                    <tbody id="admin-student-list"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- INSTRUCTIONS -->
+    <!-- SECTION: QUIZ CREATOR (UPLOAD + MANUAL) -->
+    <div id="section-quiz-creator" class="container hidden">
+        <div class="card">
+            <h3>Create New DPP</h3>
+            <div class="panel panel-ok">
+                <h4 class="panel-title">📂 Upload DPP via JSON</h4>
+                <p class="muted">Select your generated .json file (Must include 'questions' array).</p>
+                <input type="file" id="jsonQuizInput" accept=".json" onchange="window.uploadQuizJSON(this)">
+            </div>
+            
+            <hr>
+            <h4>Or Create Manually</h4>
+            <div class="grid three">
+                <input type="text" id="newQuizTitle" class="input-field" placeholder="DPP Title">
+                <input type="number" id="newQuizTime" class="input-field" placeholder="Time (Mins)">
+                <input type="number" id="newQuizMarks" class="input-field" placeholder="Total Marks">
+            </div>
+            <textarea id="newQuizInstructions" class="input-field" rows="2" placeholder="Instructions..."></textarea>
+            
+            <!-- Manual Question Addition -->
+            <div class="creator-section">
+                <h4>Add Question</h4>
+                <div class="row">
+                    <select id="qType" class="input-field" style="width:auto;" onchange="window.renderAnswerInputs()">
+                        <option value="mcq">MCQ</option>
+                        <option value="text">Subjective</option>
+                    </select>
+                </div>
+                <textarea id="qText" class="input-field" rows="2" placeholder="Question Text (Supports LaTeX)..."></textarea>
+                <div id="answer-inputs-area"></div>
+                <textarea id="qSolution" class="input-field" rows="2" placeholder="Solution / Hint (Optional)..."></textarea>
+                <button class="btn btn-primary" onclick="window.addQuestionToBuffer()">+ Add Question</button>
+            </div>
+            
+            <div style="margin-top:20px;">
+                <h4>Preview (<span id="qCount">0</span>)</h4>
+                <div id="questions-buffer-list"></div>
+            </div>
+            
+            <div style="margin-top:20px; text-align:right;">
+                <button class="btn btn-danger" onclick="window.goToAdminDashboard()">Cancel</button>
+                <button class="btn btn-success" onclick="window.publishQuiz()">🚀 Publish DPP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: INSTRUCTIONS -->
     <div id="section-instructions" class="container hidden">
         <div class="card centered">
             <h2 id="ins-title">Quiz Title</h2>
             <div class="notice">
-                <strong>CSIR-NET Instructions:</strong>
-                <p>1. Correct Answer: +Marks assigned.</p>
-                <p>2. Use the "Save & Next" button to proceed.</p>
-                <p>3. You can <strong>Pause</strong> the test and resume later.</p>
+                <strong>Instructions:</strong>
+                <p id="ins-text" class="small">Read carefully.</p>
+                <div>Time: <span id="ins-time"></span> mins | Marks: <span id="ins-marks"></span></div>
             </div>
-            <button class="btn btn-success" style="width:100%;" onclick="window.startTest()">Start Test</button>
+            <button class="btn btn-success" style="width:100%; margin-top:10px;" onclick="window.startTest()">Start Test</button>
         </div>
     </div>
 
-    <!-- ACTIVE QUIZ INTERFACE -->
+    <!-- SECTION: ACTIVE QUIZ -->
     <div id="section-active-quiz" class="container hidden">
         <div class="card">
             <div class="question-header">
                 <div>
                     <span class="strong">Question <span id="active-q-num">1</span></span>
-                    <span class="q-tag">Part B/C</span>
+                    <span class="q-tag" id="active-q-type">MCQ</span>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button class="btn btn-warning btn-small" onclick="window.pauseTest()">⏸️ Pause & Save</button>
+                    <button class="btn btn-warning btn-small" onclick="window.pauseTest()">⏸️ Pause</button>
                     <div class="timer-badge" id="timer-display">00:00</div>
                 </div>
             </div>
-            
-            <!-- Question Content with MathJax Support -->
-            <h3 id="active-question-text" class="question-text" style="font-size:1.1em; line-height:1.6;">Loading...</h3>
-            
+            <h3 id="active-question-text" class="question-text">Loading...</h3>
             <div id="active-options-area"></div>
-            
             <div class="nav-row">
                 <button class="btn btn-primary" id="btn-prev" onclick="window.changeQuestion(-1)">Previous</button>
                 <button class="btn btn-success" id="btn-next" onclick="window.changeQuestion(1)">Save & Next</button>
-                <button class="btn btn-danger" id="btn-submit" onclick="window.submitTest()" style="display:none;">Submit Final</button>
+                <button class="btn btn-danger" id="btn-submit" onclick="window.submitTest()" style="display:none;">Submit Test</button>
             </div>
         </div>
-        
-        <!-- Question Grid -->
         <div class="card">
             <h4>Question Palette</h4>
             <div id="question-grid-target" class="grid-container"></div>
         </div>
     </div>
 
-    <!-- RESULT & SOLUTIONS -->
+    <!-- SECTION: RESULT -->
     <div id="section-result" class="container hidden">
         <div class="card center">
-            <h2>Test Analysis</h2>
-            <div class="score-big"><span id="res-score">0</span> / <span id="res-total">0</span></div>
-            <p class="muted">Check the detailed solutions below.</p>
+            <h2 id="res-status-title">Result</h2>
+            <div id="res-score-box">
+                <div class="score-big"><span id="res-score">0</span> / <span id="res-total">0</span></div>
+            </div>
+            <button class="btn btn-primary" onclick="window.checkUserLoginStatus()">Back to Dashboard</button>
         </div>
-        <div class="card">
-            <h3>Detailed Solutions & Hints</h3>
+        <div class="card" id="res-details-card">
+            <h3>Detailed Solutions</h3>
             <div id="detailed-report"></div>
         </div>
-        <button class="btn btn-primary" onclick="window.goToHome()">Back to Dashboard</button>
     </div>
 
     <script type="module" src="app.js"></script>
