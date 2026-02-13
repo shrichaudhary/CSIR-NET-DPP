@@ -13,14 +13,14 @@
 * { box-sizing: border-box; }
 
 body { margin: 0; padding: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-color: var(--light); color: var(--dark); }
-nav { background-color: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+nav { background-color: var(--primary); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); position: relative; z-index: 100; }
 
 .brand { font-size: 1.3em; font-weight: 700; letter-spacing: 0.5px; }
 .nav-right { display: flex; gap: 10px; align-items: center; }
 .hidden { display: none !important; }
 
 /* Buttons & Inputs */
-.btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: 0.2s; font-weight: 600; }
+.btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: 0.2s; font-weight: 600; position: relative; z-index: 5; }
 .btn:hover { opacity: 0.9; transform: translateY(-1px); }
 .btn-small { padding: 5px 10px; font-size: 12px; }
 .btn-primary { background-color: var(--secondary); color: white; }
@@ -32,12 +32,16 @@ nav { background-color: var(--primary); padding: 15px 20px; display: flex; justi
 nav .btn-outline { border-color: white; color: white; } 
 
 /* Containers */
-.container { padding: 20px; max-width: 1000px; margin: 0 auto; }
-.input-field { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-.card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+.container { padding: 20px; max-width: 1000px; margin: 0 auto; position: relative; z-index: 1; }
+.input-field { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; position: relative; z-index: 5; }
+.card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; position: relative; z-index: 2; }
 .grid { display: grid; gap: 20px; }
 .grid.two { grid-template-columns: 1fr 1fr; }
 .grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+/* Layout Helpers */
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+.admin-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
 
 .auth-box { max-width: 500px; margin: 40px auto; }
 .hero { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; text-align: center; }
@@ -55,7 +59,7 @@ tbody tr:hover { background-color: #f8f9fa; }
 .question-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
 .q-tag { font-size: 0.8em; padding: 3px 8px; border-radius: 4px; background: #e3f2fd; color: var(--primary); font-weight: bold; margin-left: 10px; }
 
-.option-block { display: flex; align-items: flex-start; gap: 12px; padding: 15px; margin: 10px 0; background: #fafafa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+.option-block { display: flex; align-items: flex-start; gap: 12px; padding: 15px; margin: 10px 0; background: #fafafa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: 0.2s; position: relative; z-index: 5; }
 .option-block:hover { background-color: #f0f4c3; border-color: #cddc39; }
 
 mjx-container { font-size: 115% !important; display: inline-block; }
@@ -74,7 +78,8 @@ mjx-container { font-size: 115% !important; display: inline-block; }
 .grid-btn.answered { background: var(--accent); color: white; border-color: var(--accent); }
 
 /* Helpers */
-.loader-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column;}
+.loader-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; pointer-events: none; }
+.loader-overlay:not(.hidden) { pointer-events: auto; }
 .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
 .tab-row { display: flex; margin-bottom: 20px; }
 .tab-btn { flex: 1; padding: 10px; border: none; background: #eee; cursor: pointer; }
