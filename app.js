@@ -1,12 +1,13 @@
 /* ================= USER CONFIGURATION ================= */
 // 1. Firebase Configuration (REPLACE WITH YOUR KEYS)
 const firebaseConfig = {
-    apiKey: "AIzaSyC0VzSG7BctaTLLk93EUxJOaerw-5i4vJo", // Replace this
-    authDomain: "commerce-study-hub.firebaseapp.com",
-    projectId: "commerce-study-hub",
-    storageBucket: "commerce-study-hub.firebasestorage.app",
-    messagingSenderId: "833331391620",
-    appId: "1:833331391620:web:bd9eeb766323bfefbf66d1"
+  apiKey: "AIzaSyDHJiBGfofCzK9ZBKdyxxGRInIBgmFOUWI",
+  authDomain: "net-dpp-site.firebaseapp.com",
+  projectId: "net-dpp-site",
+  storageBucket: "net-dpp-site.firebasestorage.app",
+  messagingSenderId: "958182963912",
+  appId: "1:958182963912:web:a8a1ac453a9b6cfa8c83fd",
+  measurementId: "G-PMXLN80BFE"
 };
 
 const APP_ID_PREFIX = "csir_net_physics"; // Unique ID for Firestore paths
